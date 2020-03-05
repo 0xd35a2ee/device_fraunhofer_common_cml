@@ -2,18 +2,11 @@ pipeline {
    agent any
    options { checkoutToSubdirectory('trustme/cml') }
    stages {
+
+      /*First stage: Download trustme's source. trustme is a multi-repo project.*/
       stage('Repo') {
-	 steps {
+        steps {
              sh 'repo init -u https://github.com/trustm3/trustme_main.git -b master -m ids-x86-yocto.xml'
-             sh 'mkdir -p .repo/local_manifests'
-             sh '''
-                echo "<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>" > .repo/local_manifests/jenkins.xml
-                echo "<manifest>" >> .repo/local_manifests/jenkins.xml
-                echo "<remote name=\\\"git-int\\\" fetch=\\\"https://git-int.aisec.fraunhofer.de\\\" />" >> .repo/local_manifests/jenkins.xml
-                echo "<remove-project name=\\\"device_fraunhofer_common_cml\\\" />" >> .repo/local_manifests/jenkins.xml
-                echo "<project path=\\\"codesonar-docker\\\" name=\\\"braunsdo/codesonar-docker\\\" remote=\\\"git-int\\\" revision=\\\"trustme\\\" />" >> .repo/local_manifests/jenkins.xml
-                echo "</manifest>" >> .repo/local_manifests/jenkins.xml
-             '''
              sh 'repo sync -j8'
              sh '''
                echo branch name from Jenkins: ${BRANCH_NAME}
@@ -25,9 +18,11 @@ pipeline {
              '''
          }
       }
-      stage('Build') {
+
+      /*
+      stage('Codebase') {
          parallel {
-            stage('Bitbake') {
+            stage('Build') {
                agent { dockerfile {
                   dir 'trustme/build/yocto/docker'
                   args '--entrypoint=\'\' -v /yocto_mirror:/source_mirror'
@@ -56,26 +51,6 @@ pipeline {
 
                      bitbake trustx-cml-initramfs multiconfig:container:trustx-core
                   '''
-               }
-            }
-            stage('Static_Analysis') {
-               agent { dockerfile {
-                  dir 'codesonar-docker'
-                  args '--entrypoint=\'\' -v /etc/passwd:/etc/passwd:ro'
-                  reuseNode true
-               } }
-               steps {
-                  script {
-                     try {
-                        sh '''
-                           export HOME=${WORKSPACE}
-                           cd ${WORKSPACE}/trustme/cml
-                           sh ${WORKSPACE}/codesonar-docker/docker-entrypoint.sh
-                        '''
-                     } catch (Exception e) {
-			currentBuild.result = 'SUCCESS'
-                     }
-                  }
                }
             }
          }
@@ -128,5 +103,5 @@ pipeline {
       always {
          archiveArtifacts artifacts: 'out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img', fingerprint: true
       }
-   }
+   }*/
 }
