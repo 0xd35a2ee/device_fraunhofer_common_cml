@@ -4,7 +4,7 @@ pipeline {
    stages {
 
       /*First stage: Download trustme's source. trustme is a multi-repo project.*/
-      stage('Repo') {
+      stage('Download Repositories') {
         steps {
              sh 'repo init -u https://github.com/trustm3/trustme_main.git -b master -m ids-x86-yocto.xml'
              sh 'repo sync -j8'
@@ -17,6 +17,35 @@ pipeline {
                git checkout -b ${BRANCH_NAME}
              '''
          }
+      }
+
+      stage('Inspect the Codebase') {
+          parallel {
+              stage('Code Format & Style') {
+                  steps {
+                      sh '${WORKSPACE}/trustme/cml/scripts/ci/check-if-code-is-formatted.sh'
+                  }
+              }
+
+              /*
+                Intentionally mark the static code analysis stage as skipped
+                We want to show that we are performing static code analysis, but not
+                as part of Jenkins's pipeline.
+               */
+              stage('Static Code Analysis') {
+                  when {
+                      expression {
+                          return false
+                      }
+                  }
+                  steps {
+                      sh '''
+                        echo "Static Code Analysis is performed using Semmle."
+                        echo "Please check GitHub's project for results from Semmle's analysis."
+                      '''
+                  }
+              }
+          }
       }
 
       /*
