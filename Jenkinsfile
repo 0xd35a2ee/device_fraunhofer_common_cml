@@ -97,11 +97,10 @@ pipeline {
             '''
          }
       }
-   }
-
-   post {
-      always {
-         archiveArtifacts artifacts: 'out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img', fingerprint: true
-      }
    }*/
+   // post {
+   //   always {
+   //      archiveArtifacts artifacts: 'out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img', fingerprint: true
+   //   }
+   // }
 }
