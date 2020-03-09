@@ -5,16 +5,6 @@ FROM debian:stretch
 RUN apt-get update && apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping libsdl1.2-dev xterm lsb-release
 
 # CI
-#
-# clang-9 toolchain for debian stretch
-RUN echo "deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch-9 main" >> /etc/apt/sources.list
-RUN echo "deb-src http://apt.llvm.org/stretch/ llvm-toolchain-stretch-9 main" >> /etc/apt/sources.list
-RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
-RUN apt-get update && apt-get install -y clang-9 clang-tools-9 clang-9-doc libclang-common-9-dev libclang-9-dev libclang1-9 clang-format-9 python-clang-9 clangd-9 lld-9 lldb-9 libfuzzer-9-dev
-RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-9 100
-RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-9 100
-RUN update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-9 100
-RUN update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-9 100
 
 # Image signing
 RUN apt-get update && apt-get install -y python-protobuf python3-protobuf

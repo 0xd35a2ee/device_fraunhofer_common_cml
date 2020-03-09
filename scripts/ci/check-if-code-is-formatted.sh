@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." >/dev/null 2>&1 && pwd)"
+CLANG_FORMAT="${ROOT_DIR}/scripts/clang-format"
 FILES=$(find $ROOT_DIR -type f -regextype sed -regex ".*\(\.c\|\.h\)")
 
-diff -u <(cat $FILES) <(clang-format $FILES)
+echo "Detected clang-format version..."
+$CLANG_FORMAT --version
+
+echo "Checking if code is properly formatted..."
+diff -u <(cat $FILES) <($CLANG_FORMAT $FILES)
 ret=$?
 
 if [ $ret -ne 0 ]; then
