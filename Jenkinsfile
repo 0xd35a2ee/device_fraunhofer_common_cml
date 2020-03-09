@@ -43,7 +43,6 @@ pipeline {
                       }
                   }
                   steps {
-                      /*Docker with clang-format*/
                       sh 'trustme/cml/scripts/ci/check-if-code-is-formatted.sh'
                   }
               }
@@ -70,32 +69,18 @@ pipeline {
       }
 
       stage('Unit Testing') {
-          parallel {
-              stage('Development Build') {
-                  when {
-                    expression {
-                        return false
-                    }
-                  }
-                  steps {
-                      sh 'echo pass'
-                  }
-              }
-
-              stage('Production Build') {
-                  when {
-                      expression {
-                          return false
-                      }
-                  }
-                  steps {
-                      sh 'echo pass'
-                  }
+          agent {
+              dockerfile {
+                  dir 'trustme/cml/scripts/ci'
+                  args '--entrypoint=\'\''
+                  reuseNode true
               }
           }
+          steps {
+              sh 'trustme/cml/scripts/ci/unit-testing.sh'
+          }
       }
-
-
+      
       stage('Build') {
           parallel {
               stage('Development Build') {
