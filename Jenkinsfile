@@ -23,10 +23,12 @@ pipeline {
           parallel {
               stage('Code Format & Style') {
                   agent {
-                      /*TODO: update the Dockerfile in the build repo instead*/
-                      dir '${WORKSPACE}/trustme/cml/scripts/ci/Dockerfile'
-                      args '--entrypoint=\'\' -v /yocto_mirror:/source_mirror'
-                      reuseNode true
+                      dockerfile {
+                          /*TODO: update the Dockerfile in the build repo instead*/
+                          dir '${WORKSPACE}/trustme/cml/scripts/ci/Dockerfile'
+                          args '--entrypoint=\'\' -v /yocto_mirror:/source_mirror'
+                          reuseNode true
+                      }
                   }
                   steps {
                       /*Docker with clang-format*/
