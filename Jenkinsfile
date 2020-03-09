@@ -22,7 +22,14 @@ pipeline {
       stage('Inspect the Codebase') {
           parallel {
               stage('Code Format & Style') {
+                  agent {
+                      /*TODO: update the Dockerfile in the build repo instead*/
+                      dir '${WORKSPACE}/trustme/cml/scripts/ci/Dockerfile'
+                      args '--entrypoint=\'\' -v /yocto_mirror:/source_mirror'
+                      reuseNode true
+                  }
                   steps {
+                      /*Docker with clang-format*/
                       sh '${WORKSPACE}/trustme/cml/scripts/ci/check-if-code-is-formatted.sh'
                   }
               }
@@ -44,6 +51,101 @@ pipeline {
                         echo "Please check GitHub's project for results from Semmle's analysis."
                       '''
                   }
+              }
+          }
+      }
+
+      stage('Unit Testing') {
+          parallel {
+              stage('Development Build') {
+                  when {
+                    expression {
+                        return false
+                    }
+                  }
+              }
+
+              stage('Production Build') {
+                  when {
+                      expression {
+                          return false
+                      }
+                  }
+              }
+          }
+      }
+
+
+      stage('Build') {
+          parallel {
+              stage('Development Build') {
+                  /*TODO;Skipped for now*/
+                  when {
+                      expression {
+                          return false
+                      }
+                  }
+              }
+
+              stage('Production Build') {
+                  /*TODO;Skipped for now*/
+                  when {
+                      expression {
+                          return false
+                      }
+                  }
+              }
+          }
+      }
+
+      /*TODO: save build artifacts?*/
+
+      stage('Integration Testing') {
+          parallel {
+              stage('Development Build') {
+                  steps {
+                      sh 'echo pass'
+                  }
+              }
+
+              stage('Production Build') {
+                  steps {
+                      sh 'echo pass'
+                  }
+              }
+          }
+      }
+
+      stage('Live Deployment') {
+          parallel {
+              stage('Development Build') {
+                  /*TODO;Skipped for now*/
+                  when {
+                      expression {
+                          /*If branch trustx master and comes from main repo?*/
+                          return false
+                      }
+                  }
+              }
+
+              stage('Production Build') {
+                  /*TODO;Skipped for now*/
+                  when {
+                      expression {
+                          /*If branch trustx master and comes from main repo?*/
+                          return false
+                      }
+                  }
+              }
+          }
+      }
+
+      stage('Documentation Generation') {
+          /*TODO;Skipped for now*/
+          when {
+              expression {
+                  /*If branch trustx master and comes from main repo?*/
+                  return false
               }
           }
       }
