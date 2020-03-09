@@ -37,14 +37,14 @@ pipeline {
                   agent {
                       dockerfile {
                           /*TODO: update the Dockerfile in the build repo instead*/
-                          dir '${WORKSPACE}/trustme/cml/scripts/ci'
+                          dir 'trustme/cml/scripts/ci'
                           args '--entrypoint=\'\' -v /yocto_mirror:/source_mirror'
                           reuseNode true
                       }
                   }
                   steps {
                       /*Docker with clang-format*/
-                      sh '${WORKSPACE}/trustme/cml/scripts/ci/check-if-code-is-formatted.sh'
+                      sh 'trustme/cml/scripts/ci/check-if-code-is-formatted.sh'
                   }
               }
 
