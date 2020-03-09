@@ -37,7 +37,7 @@ pipeline {
                   agent {
                       dockerfile {
                           /*TODO: update the Dockerfile in the build repo instead*/
-                          dir '${WORKSPACE}/trustme/cml/scripts/ci/Dockerfile'
+                          dir '${WORKSPACE}/trustme/cml/scripts/ci'
                           args '--entrypoint=\'\' -v /yocto_mirror:/source_mirror'
                           reuseNode true
                       }
