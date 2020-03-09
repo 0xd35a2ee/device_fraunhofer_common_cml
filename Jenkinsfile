@@ -65,6 +65,9 @@ pipeline {
                         return false
                     }
                   }
+                  steps {
+                      sh 'echo pass'
+                  }
               }
 
               stage('Production Build') {
@@ -72,6 +75,9 @@ pipeline {
                       expression {
                           return false
                       }
+                  }
+                  steps {
+                      sh 'echo pass'
                   }
               }
           }
@@ -87,6 +93,9 @@ pipeline {
                           return false
                       }
                   }
+                  steps {
+                      sh 'echo pass'
+                  }
               }
 
               stage('Production Build') {
@@ -95,6 +104,9 @@ pipeline {
                       expression {
                           return false
                       }
+                  }
+                  steps {
+                      sh 'echo pass'
                   }
               }
           }
@@ -105,12 +117,24 @@ pipeline {
       stage('Integration Testing') {
           parallel {
               stage('Development Build') {
+                  /*TODO;Skipped for now*/
+                  when {
+                      expression {
+                          return false
+                      }
+                  }
                   steps {
                       sh 'echo pass'
                   }
               }
 
               stage('Production Build') {
+                  /*TODO;Skipped for now*/
+                  when {
+                      expression {
+                          return false
+                      }
+                  }
                   steps {
                       sh 'echo pass'
                   }
@@ -128,6 +152,9 @@ pipeline {
                           return false
                       }
                   }
+                  steps {
+                      sh 'echo pass'
+                  }
               }
 
               stage('Production Build') {
@@ -137,6 +164,9 @@ pipeline {
                           /*If branch trustx master and comes from main repo?*/
                           return false
                       }
+                  }
+                  steps {
+                      sh 'echo pass'
                   }
               }
           }
@@ -149,6 +179,9 @@ pipeline {
                   /*If branch trustx master and comes from main repo?*/
                   return false
               }
+          }
+          steps {
+              sh 'echo pass'
           }
       }
 
