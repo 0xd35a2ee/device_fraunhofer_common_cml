@@ -80,31 +80,88 @@ pipeline {
               sh 'trustme/cml/scripts/ci/unit-testing.sh'
           }
       }
-      
-      stage('Build') {
+
+      /*TODO: save images*/
+      stage('Yocto Build') {
           parallel {
-              stage('Development Build') {
+              stage('Development Image') {
+                  agent {
+                      dockerfile {
+                          dir 'trustme/cml/scripts/ci'
+                          args '--entrypoint=\'\' -v /yocto_mirror:/source_mirror'
+                          reuseNode true
+                      }
+                  }
                   /*TODO;Skipped for now*/
                   when {
                       expression {
-                          return false
+                          return true
                       }
                   }
-                  steps {
-                      sh 'echo pass'
-                  }
+                   steps {
+                      sh '''
+                         export LC_ALL=en_US.UTF-8
+                         export LANG=en_US.UTF-8
+                         export LANGUAGE=en_US.UTF-8
+                         if [ -d out-yocto/conf ]; then
+                            rm -r out-yocto/conf
+                         fi
+                         . init_ws.sh out-yocto
+
+                         echo Using branch name ${BRANCH_NAME} in bbappend files
+                         cd ${WORKSPACE}/out-yocto
+                         echo "BRANCH = \\\"${BRANCH_NAME}\\\"" > cmld_git.bbappend.jenkins
+                         cat cmld_git.bbappend >> cmld_git.bbappend.jenkins
+                         rm cmld_git.bbappend
+                         cp cmld_git.bbappend.jenkins cmld_git.bbappend
+
+                         echo "SOURCE_MIRROR_URL ?= \\\"file:///source_mirror/sources/\\\"" >> conf/local.conf
+                         echo "INHERIT += \\\"own-mirrors\\\"" >> conf/local.conf
+                         echo "BB_GENERATE_MIRROR_TARBALLS = \\\"1\\\"" >> conf/local.conf
+
+                         bitbake trustx-cml-initramfs multiconfig:container:trustx-core
+                      '''
+                   }
               }
 
-              stage('Production Build') {
+              stage('Production Image') {
+                  agent {
+                      dockerfile {
+                          dir 'trustme/cml/scripts/ci'
+                          args '--entrypoint=\'\' -v /yocto_mirror:/source_mirror'
+                          reuseNode true
+                      }
+                  }
                   /*TODO;Skipped for now*/
                   when {
                       expression {
-                          return false
+                          return true
                       }
                   }
-                  steps {
-                      sh 'echo pass'
-                  }
+                   steps {
+                      sh '''
+                         export LC_ALL=en_US.UTF-8
+                         export LANG=en_US.UTF-8
+                         export LANGUAGE=en_US.UTF-8
+                         if [ -d out-yocto/conf ]; then
+                            rm -r out-yocto/conf
+                         fi
+                         . init_ws.sh out-yocto
+
+                         echo Using branch name ${BRANCH_NAME} in bbappend files
+                         cd ${WORKSPACE}/out-yocto
+                         echo "BRANCH = \\\"${BRANCH_NAME}\\\"" > cmld_git.bbappend.jenkins
+                         cat cmld_git.bbappend >> cmld_git.bbappend.jenkins
+                         rm cmld_git.bbappend
+                         cp cmld_git.bbappend.jenkins cmld_git.bbappend
+
+                         echo "SOURCE_MIRROR_URL ?= \\\"file:///source_mirror/sources/\\\"" >> conf/local.conf
+                         echo "INHERIT += \\\"own-mirrors\\\"" >> conf/local.conf
+                         echo "BB_GENERATE_MIRROR_TARBALLS = \\\"1\\\"" >> conf/local.conf
+
+                         bitbake trustx-cml-initramfs multiconfig:container:trustx-core
+                      '''
+                   }
               }
           }
       }
@@ -113,7 +170,7 @@ pipeline {
 
       stage('Integration Testing') {
           parallel {
-              stage('Development Build') {
+              stage('Development Image') {
                   /*TODO;Skipped for now*/
                   when {
                       expression {
@@ -125,7 +182,7 @@ pipeline {
                   }
               }
 
-              stage('Production Build') {
+              stage('Production Image') {
                   /*TODO;Skipped for now*/
                   when {
                       expression {
@@ -141,7 +198,7 @@ pipeline {
 
       stage('Live Deployment') {
           parallel {
-              stage('Development Build') {
+              stage('Development Image') {
                   /*TODO;Skipped for now*/
                   when {
                       expression {
@@ -154,7 +211,7 @@ pipeline {
                   }
               }
 
-              stage('Production Build') {
+              stage('Production Image') {
                   /*TODO;Skipped for now*/
                   when {
                       expression {
