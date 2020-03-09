@@ -7,6 +7,18 @@ pipeline {
       stage('Download Repositories') {
         steps {
              sh 'repo init -u https://github.com/trustm3/trustme_main.git -b master -m ids-x86-yocto.xml'
+             /*
+                Before syncing, instruct repo to remove the old version of the CML repository
+                which is lying around in the workspace. This will allow repo to download
+                the new version that will be tested without any git conflicts.
+              */
+             sh 'mkdir -p .repo/local_manifests'
+             sh '''
+                echo "<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>" > .repo/local_manifests/jenkins.xml
+                echo "<manifest>" >> .repo/local_manifests/jenkins.xml
+                echo "<remove-project name=\\\"device_fraunhofer_common_cml\\\" />" >> .repo/local_manifests/jenkins.xml
+                echo "</manifest>" >> .repo/local_manifests/jenkins.xml
+            '''
              sh 'repo sync -j8'
              sh '''
                echo branch name from Jenkins: ${BRANCH_NAME}
