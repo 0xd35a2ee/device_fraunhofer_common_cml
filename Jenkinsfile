@@ -93,11 +93,11 @@ pipeline {
                       }
                   }
                   /*TODO;Skipped for now*/
-                  when {
-                      expression {
-                          return true
-                      }
-                  }
+                  /*when {*/
+                      /*expression {*/
+                          /*return true*/
+                      /*}*/
+                  /*}*/
                    steps {
                       sh '''
                          export LC_ALL=en_US.UTF-8
@@ -122,18 +122,12 @@ pipeline {
                          bitbake trustx-cml-initramfs multiconfig:container:trustx-core
                       '''
                    }
-              }
-              post {
-                  success {
-                      archiveArtifacts artifacts: "out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img", fingerprint: true
+                  post {
+                      success {
+                          archiveArtifacts artifacts: "out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img", fingerprint: true
+                      }
                   }
               }
-   // post {
-   //   always {
-   //      archiveArtifacts artifacts: 'out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img', fingerprint: true
-   //   }
-   // }
-
 
               stage('Production Image') {
                   agent {
@@ -144,11 +138,11 @@ pipeline {
                       }
                   }
                   /*TODO;Skipped for now*/
-                  when {
-                      expression {
-                          return true
-                      }
-                  }
+                  /*when {*/
+                      /*expression {*/
+                          /*return true*/
+                      /*}*/
+                  /*}*/
                    steps {
                       sh '''
                          export LC_ALL=en_US.UTF-8
@@ -173,10 +167,10 @@ pipeline {
                          bitbake trustx-cml-initramfs multiconfig:container:trustx-core
                       '''
                    }
-              }
-              post {
-                  success {
-                      archiveArtifacts artifacts: "out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img", fingerprint: true
+                  post {
+                      success {
+                          archiveArtifacts artifacts: "out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img", fingerprint: true
+                      }
                   }
               }
           }
