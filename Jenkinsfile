@@ -123,6 +123,17 @@ pipeline {
                       '''
                    }
               }
+              post {
+                  success {
+                      archiveArtifacts artifacts: "out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img", fingerprint: true
+                  }
+              }
+   // post {
+   //   always {
+   //      archiveArtifacts artifacts: 'out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img', fingerprint: true
+   //   }
+   // }
+
 
               stage('Production Image') {
                   agent {
@@ -162,6 +173,11 @@ pipeline {
                          bitbake trustx-cml-initramfs multiconfig:container:trustx-core
                       '''
                    }
+              }
+              post {
+                  success {
+                      archiveArtifacts artifacts: "out-yocto/tmp/deploy/images/**/trustme_image/trustmeimage.img", fingerprint: true
+                  }
               }
           }
       }
